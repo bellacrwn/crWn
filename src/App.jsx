@@ -394,7 +394,7 @@ export default function App() {
         </div>
 
         <Bounce style={{ position: "relative", background: "#0d0d0d", border: "1px solid #1e1e1e", aspectRatio: "3/4", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <img src="free.png" alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <img src="/free.png" alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           <div style={{ position: "absolute", bottom: -1, left: -1, right: -1, background: "rgba(10,10,10,0.96)", borderTop: "1px solid #1e1e1e", padding: "1.2rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
             <div>
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1rem", fontWeight: 600 }}>Jeremiah Ibeun</div>
@@ -422,7 +422,7 @@ export default function App() {
         </div>
         <div>
           <Bounce style={{ width: "100%", aspectRatio: "1/1", background: "#0d0d0d", border: "1px solid #1e1e1e", overflow: "hidden", marginBottom: "1.5rem" }}>
-            <img src="jj.png" alt="Jeremiah" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src="/jj.png" alt="Jeremiah" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </Bounce>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid #222" }}>
             {[["10+", "Projects Done"], ["2+", "Years Exp."], ["3+", "Companies"], ["4", "Certifications"]].map(([n, l], i) => (
