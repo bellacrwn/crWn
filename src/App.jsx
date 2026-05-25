@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Analytics } from '@vercel/analytics/react';
 
 /* ══════════════════════════════════════════
    HACKER BACKGROUND — canvas animation
@@ -318,7 +319,7 @@ function CertCard({ issuer, name, year, status, active }) {
   );
 }
 
-/* ══════════════════════════════════════════
+/* ═════════════════════════════════════════��
    MAIN APP
 ══════════════════════════════════════════ */
 export default function App() {
@@ -562,6 +563,7 @@ export default function App() {
           ))}
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 }
