@@ -394,7 +394,7 @@ export default function App() {
         </div>
 
         <Bounce style={{ position: "relative", background: "#0d0d0d", border: "1px solid #1e1e1e", aspectRatio: "3/4", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <img src="/free.png" alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <img src="public/free.png" alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           <div style={{ position: "absolute", bottom: -1, left: -1, right: -1, background: "rgba(10,10,10,0.96)", borderTop: "1px solid #1e1e1e", padding: "1.2rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
             <div>
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1rem", fontWeight: 600 }}>Jeremiah Ibeun</div>
@@ -416,13 +416,13 @@ export default function App() {
             <p>Also teaching computer studies at <strong style={{ color: "#ccc", fontWeight: 500 }}>Success Mandate Secondary School</strong> in Lagos, helping students develop real digital skills.</p>
           </div>
           <div style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
-            <a href="jeremiah software.pdf" target="_blank" rel="noreferrer" style={btnP}>Download CV</a>
+            <a href="public/cv.pdf" target="_blank" rel="noreferrer" style={btnP}>Download CV</a>
             <a href="#portfolio" style={btnO}>View Projects</a>
           </div>
         </div>
         <div>
           <Bounce style={{ width: "100%", aspectRatio: "1/1", background: "#0d0d0d", border: "1px solid #1e1e1e", overflow: "hidden", marginBottom: "1.5rem" }}>
-            <img src="/jj.png" alt="Jeremiah" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src="public/jj.png" alt="Square headshot of Jeremiah Ibeun in a dark profile frame, suggesting a confident professional tone" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </Bounce>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid #222" }}>
             {[["10+", "Projects Done"], ["2+", "Years Exp."], ["3+", "Companies"], ["4", "Certifications"]].map(([n, l], i) => (
