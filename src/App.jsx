@@ -1,6 +1,35 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 /* ══════════════════════════════════════════
+   DEVICE DETECTION HOOK
+══════════════════════════════════════════ */
+function useWindowSize() {
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    isMobile: typeof window !== "undefined" ? window.innerWidth < 768 : false,
+    isTablet: typeof window !== "undefined" ? window.innerWidth >= 768 && window.innerWidth < 1024 : false,
+    isDesktop: typeof window !== "undefined" ? window.innerWidth >= 1024 : false,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      const width = window.innerWidth;
+      setWindowSize({
+        width,
+        isMobile: width < 768,
+        isTablet: width >= 768 && width < 1024,
+        isDesktop: width >= 1024,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return windowSize;
+}
+
+/* ══════════════════════════════════════════
    HACKER BACKGROUND — canvas animation
 ══════════════════════════════════════════ */
 function HackerBg() {
@@ -214,13 +243,14 @@ function Intro({ onDone }) {
    MARQUEE
 ══════════════════════════════════════════ */
 function Marquee() {
+  const { isMobile } = useWindowSize();
   const items = ["UI/UX Design","Web Development","Cybersecurity Student","HTML & CSS","Figma","Python","Branding","Open to Work","Lagos Nigeria"];
   const doubled = [...items, ...items, ...items];
   return (
-    <div style={{ overflow: "hidden", borderBottom: "1px solid #222", padding: "0.6rem 0", background: "#0a0a0a", position: "relative", zIndex: 2 }}>
-      <div style={{ display: "flex", gap: "3rem", animation: "marquee 20s linear infinite", whiteSpace: "nowrap" }}>
+    <div style={{ overflow: "hidden", borderBottom: "1px solid #222", padding: isMobile ? "0.4rem 0" : "0.6rem 0", background: "#0a0a0a", position: "relative", zIndex: 2 }}>
+      <div style={{ display: "flex", gap: isMobile ? "2rem" : "3rem", animation: "marquee 20s linear infinite", whiteSpace: "nowrap" }}>
         {doubled.map((item, i) => (
-          <span key={i} style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#3a3a3a", fontWeight: 500 }}>
+          <span key={i} style={{ fontSize: isMobile ? "0.6rem" : "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#3a3a3a", fontWeight: 500 }}>
             {item}
           </span>
         ))}
@@ -234,20 +264,21 @@ function Marquee() {
 ══════════════════════════════════════════ */
 function Nav() {
   const [hov, setHov] = useState(null);
+  const { isMobile } = useWindowSize();
   const links = ["home","about","skills","portfolio","certifications","contact"];
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   return (
-    <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.2rem 3rem", background: "rgba(10,10,10,0.93)", backdropFilter: "blur(14px)", borderBottom: "1px solid #222" }}>
-      <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "0.95rem", fontWeight: 600, color: "#f0f0f0" }}>jeremiah.io</span>
-      <div style={{ display: "flex", gap: "2rem" }}>
+    <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: isMobile ? "0.8rem 1rem" : "1.2rem 3rem", background: "rgba(10,10,10,0.93)", backdropFilter: "blur(14px)", borderBottom: "1px solid #222" }}>
+      <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: isMobile ? "0.8rem" : "0.95rem", fontWeight: 600, color: "#f0f0f0" }}>jeremiah.io</span>
+      <div style={{ display: "flex", gap: isMobile ? "0.8rem" : "2rem", flexWrap: isMobile ? "wrap" : "nowrap" }}>
         {links.map((l) => (
           <button key={l} onClick={() => scrollTo(l)} onMouseEnter={() => setHov(l)} onMouseLeave={() => setHov(null)}
-            style={{ background: "none", border: "none", color: hov === l ? "#f0f0f0" : "#555", fontSize: "0.82rem", cursor: "pointer", textTransform: "capitalize", letterSpacing: "0.03em", padding: 0, transition: "color 0.2s" }}>
+            style={{ background: "none", border: "none", color: hov === l ? "#f0f0f0" : "#555", fontSize: isMobile ? "0.65rem" : "0.82rem", cursor: "pointer", textTransform: "capitalize", letterSpacing: "0.03em", padding: 0, transition: "color 0.2s" }}>
             {l}
           </button>
         ))}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: "0.75rem", color: "#555" }}>
+      <div style={{ display: isMobile ? "none" : "flex", alignItems: "center", gap: 7, fontSize: "0.75rem", color: "#555" }}>
         <span style={{ width: 6, height: 6, background: "#4ade80", borderRadius: "50%", display: "inline-block", animation: "blink 2s infinite" }} />
         Available for work
       </div>
@@ -326,6 +357,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("Projects");
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
+  const { isMobile, isTablet, isDesktop } = useWindowSize();
 
   const onIntroDone = useCallback(() => setIntroGone(true), []);
 
@@ -361,6 +393,80 @@ export default function App() {
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #1e1e1e; }
+        
+        /* ══════════════════════════════════════════
+           DEVICE DETECTION — RESPONSIVE DESIGN
+        ══════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+          nav { padding: 1rem 1.5rem !important; }
+          nav span { font-size: 0.85rem; }
+          section { padding: 4rem 2rem !important; }
+        }
+        
+        @media (max-width: 768px) {
+          nav {
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem !important;
+          }
+          nav > div { flex-wrap: wrap; gap: 1rem !important; }
+          nav button { font-size: 0.7rem; }
+          .marquee-container { padding: 0.4rem 0 !important; }
+          .marquee-container span { font-size: 0.6rem; }
+          
+          section { padding: 3rem 1.5rem !important; }
+          
+          #home {
+            grid-template-columns: 1fr !important;
+            padding: 5rem 1.5rem 2rem !important;
+            gap: 2rem !important;
+          }
+          
+          #about {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+          }
+          
+          #skills .grid-3 {
+            grid-template-columns: 1fr !important;
+          }
+          
+          #portfolio .grid-3 {
+            grid-template-columns: 1fr !important;
+          }
+          
+          #certifications .grid-3 {
+            grid-template-columns: 1fr !important;
+          }
+          
+          #contact .grid-2 {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+          }
+          
+          .stats-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+          
+          .tab-buttons { flex-wrap: wrap; }
+          .tab-buttons button { padding: 0.4rem 1rem !important; font-size: 0.7rem; }
+        }
+        
+        @media (max-width: 480px) {
+          nav { padding: 0.8rem !important; }
+          nav > span { font-size: 0.75rem; }
+          nav > div { gap: 0.8rem !important; }
+          nav button { font-size: 0.65rem; }
+          
+          section { padding: 2.5rem 1rem !important; }
+          #home { padding: 4rem 1rem 1.5rem !important; }
+          
+          .stats-grid { grid-template-columns: 1fr !important; }
+          #contact .grid-2 { gap: 1.5rem !important; }
+          
+          footer { flex-direction: column !important; gap: 1rem !important; text-align: center; }
+          footer > div:last-child { flex-direction: column; gap: 0.5rem; }
+        }
       `}</style>
 
       <HackerBg />
@@ -369,7 +475,7 @@ export default function App() {
       <Nav />
 
       {/* ── HERO ── */}
-      <section id="home" style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr", padding: "8rem 3rem 4rem", gap: "4rem", alignItems: "center", borderBottom: "1px solid #222", position: "relative", zIndex: 2 }}>
+      <section id="home" style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", padding: isMobile ? "5rem 1.5rem 2rem" : "8rem 3rem 4rem", gap: isMobile ? "2rem" : "4rem", alignItems: "center", borderBottom: "1px solid #222", position: "relative", zIndex: 2 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "#0d0d0d", border: "1px solid #1e1e1e", padding: "0.4rem 0.9rem", fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#666", width: "fit-content" }}>
             <span style={{ width: 6, height: 6, background: "#4ade80", borderRadius: "50%", display: "inline-block", animation: "blink 2s infinite" }} />
@@ -406,7 +512,7 @@ export default function App() {
       </section>
 
       {/* ── ABOUT ── */}
-      <section id="about" style={sec({ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "start" })}>
+      <section id="about" style={sec({ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? "2rem" : "5rem", alignItems: "start" })}>
         <div>
           <div style={eye}>About Me</div>
           <div style={stitle}>Jeremiah<br />Ibeun</div>
@@ -424,7 +530,7 @@ export default function App() {
           <Bounce style={{ width: "100%",height: "400px",aspectRatio: "1/1", background: "#0d0d0d", border: "1px solid #1e1e1e", overflow: "hidden", marginBottom: "1.5rem" }}>
             <img src="https://ibeunjeremiah.netlify.app/perfil.png" alt="Square headshot of Jeremiah Ibeun in a dark profile frame, suggesting a confident professional tone" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </Bounce>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "1px solid #222" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", border: "1px solid #222" }} className="stats-grid">
             {[["10+", "Projects Done"], ["2+", "Years Exp."], ["3+", "Companies"], ["4", "Certifications"]].map(([n, l], i) => (
               <div key={l} style={{ padding: "1.2rem", borderRight: i % 2 === 0 ? "1px solid #222" : "none", borderBottom: i < 2 ? "1px solid #222" : "none" }}>
                 <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.8rem", fontWeight: 700 }}>{n}</div>
@@ -442,7 +548,7 @@ export default function App() {
           <div style={stitle}>What I Can Do</div>
           <p style={ssub}>Entry-level capabilities across design and cybersecurity — built from real projects, coursework, and hands-on practice.</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", border: "1px solid #222" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", border: "1px solid #222" }} className="grid-3">
           <SkillCard num="01" name="UI/UX Design" desc="Design clean, user-centred interfaces in Figma. From wireframes to high-fidelity prototypes, focused on usability and visual clarity." />
           <SkillCard num="02" name="Web Development" desc="Build responsive websites with HTML5, CSS3, Bootstrap, and JavaScript. Comfortable working from design files to live code." />
           <SkillCard num="03" name="Brand Identity" desc="Create visual identities including logo design, colour systems, and brand guidelines using Figma and Photoshop." />
@@ -459,16 +565,16 @@ export default function App() {
             <div style={eye}>Selected Work</div>
             <div style={stitle}>Portfolio</div>
           </div>
-          <div style={{ display: "flex" }}>
+          <div style={{ display: "flex", flexWrap: "wrap" }} className="tab-buttons">
             {["Projects", "Design", "Dev"].map((tab, i) => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                style={{ padding: "0.55rem 1.4rem", fontSize: "0.78rem", letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", background: activeTab === tab ? "#f0f0f0" : "transparent", color: activeTab === tab ? "#0a0a0a" : "#555", border: "1px solid #222", borderRight: i < 2 ? "none" : "1px solid #222", transition: "all 0.2s" }}>
+                style={{ padding: isMobile ? "0.4rem 1rem" : "0.55rem 1.4rem", fontSize: isMobile ? "0.7rem" : "0.78rem", letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", background: activeTab === tab ? "#f0f0f0" : "transparent", color: activeTab === tab ? "#0a0a0a" : "#555", border: "1px solid #222", borderRight: i < 2 ? "none" : "1px solid #222", transition: "all 0.2s" }}>
                 {tab}
               </button>
             ))}
           </div>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", border: "1px solid #222" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", border: "1px solid #222" }} className="grid-3">
           <ProjectCard type="Web Development" title="Personal Portfolio Website" desc="A fully responsive developer portfolio built from scratch. Includes animated sections, smooth scroll, and a contact form. Deployed live on Netlify." tags={["HTML5","CSS3","JS","Netlify"]} link="https://ayodeji-visuals.vercel.app/" linkText="View Live" />
           <ProjectCard type="UI/UX Design" title="Brand Identity Design" desc="Designed a complete visual identity including logo, typography, colour palette, and UI components for a digital brand using Figma." tags={["Figma","UI Design","Branding"]} link="https://capsulejio.netlify.app/" linkText="View Project" />
           <ProjectCard type="Operations & Content" title="ICT & Social Media Growth" desc="Managed ICT operations and social media for Arise Business Center. Content strategy boosted brand engagement by 40% within one month." tags={["Content","Analytics","Operations"]} link="https://capsulejio.netlify.app/" linkText="Read More" />
@@ -482,7 +588,7 @@ export default function App() {
       <section id="certifications" style={sec()}>
         <div style={eye}>Credentials</div>
         <div style={stitle}>Certifications &<br />Education</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", border: "1px solid #222", marginTop: "3rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", border: "1px solid #222", marginTop: "3rem" }} className="grid-3">
           <CertCard issuer="ISC²" name="Certified in Cybersecurity (CC)" year="2025" status="Certified" active />
           <CertCard issuer="Google" name="Digital Marketing Certificate" year="2025" status="Certified" active />
           <CertCard issuer="Cisco NetAcad" name="Introduction to Cybersecurity" year="2025" status="Certified" active />
@@ -497,7 +603,7 @@ export default function App() {
         <div style={eye}>Get in Touch</div>
         <div style={stitle}>Contact Jeremiah</div>
         <p style={ssub}>Reach out for design projects, collaborations, or just to connect.</p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", marginTop: "3rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? "2rem" : "5rem", marginTop: "3rem" }} className="grid-2">
           <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <p style={{ fontSize: "0.82rem", color: "#555", fontWeight: 300, lineHeight: 1.7 }}>Use the form for project enquiries, feedback, or collaboration around design and cybersecurity work.</p>
             {[["Name","text","name"],["Email","email","email"]].map(([label, type, key]) => (
@@ -550,12 +656,12 @@ export default function App() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{ padding: "1.5rem 3rem", borderTop: "1px solid #222", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", position: "relative", zIndex: 2 }}>
+      <footer style={{ padding: isMobile ? "1.2rem" : "1.5rem 3rem", borderTop: "1px solid #222", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", position: "relative", zIndex: 2 }}>
         <div style={{ fontSize: "0.75rem", color: "#333" }}>© 2026 Jeremiah Ibeun — All rights reserved.</div>
-        <div style={{ display: "flex", gap: "2rem" }}>
+        <div style={{ display: "flex", gap: isMobile ? "0.5rem" : "2rem" }}>
           {["home","about","portfolio","contact"].map((l) => (
             <button key={l} onClick={() => document.getElementById(l)?.scrollIntoView({ behavior: "smooth" })}
-              style={{ background: "none", border: "none", fontSize: "0.75rem", color: "#333", cursor: "pointer", textTransform: "capitalize", transition: "color 0.2s" }}
+              style={{ background: "none", border: "none", fontSize: isMobile ? "0.65rem" : "0.75rem", color: "#333", cursor: "pointer", textTransform: "capitalize", transition: "color 0.2s" }}
               onMouseEnter={(e) => (e.target.style.color = "#888")} onMouseLeave={(e) => (e.target.style.color = "#333")}>
               {l}
             </button>
